@@ -19,7 +19,5 @@ func NewServer(handlers handlers.Handlers) *Server {
 func (s *Server) Start(port string) {
 	r := gin.Default()
 
-	// set endpoints
-
 	r.Run(port)
 }
