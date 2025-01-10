@@ -11,7 +11,7 @@ func main() {
 
 	handlers := handlers.NewHandlersManager(config)
 
-	server := server.NewServer(handlers)
+	server := server.NewServer(handlers, config)
 
-	server.Start(config.Gateway.Server.Port)
+	server.Start()
 }
