@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"APIGateway/config"
+	"APIGateway/internal/requester"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,11 +25,13 @@ type Handlers interface {
 }
 
 type HandlersManager struct {
-	cfg config.Config
+	requester requester.Requester
+	cfg       config.Config
 }
 
-func NewHandlersManager(cfg config.Config) Handlers {
+func NewHandlersManager(requester requester.Requester, cfg config.Config) *HandlersManager {
 	return &HandlersManager{
-		cfg: cfg,
+		requester: requester,
+		cfg:       cfg,
 	}
 }

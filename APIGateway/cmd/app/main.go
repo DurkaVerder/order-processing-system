@@ -3,13 +3,16 @@ package main
 import (
 	"APIGateway/config"
 	"APIGateway/internal/handlers"
+	"APIGateway/internal/requester"
 	"APIGateway/internal/server"
 )
 
 func main() {
 	config := config.LoadConfig()
 
-	handlers := handlers.NewHandlersManager(config)
+	requester := requester.NewRequestManager()
+
+	handlers := handlers.NewHandlersManager(requester, config)
 
 	server := server.NewServer(handlers, config)
 
