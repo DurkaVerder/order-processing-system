@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"time"
 )
 
 // Requester is an interface for sending requests
@@ -20,11 +19,9 @@ type RequestManager struct {
 }
 
 // NewRequestManager is a constructor for RequestManager
-func NewRequestManager() *RequestManager {
+func NewRequestManager(client *http.Client) *RequestManager {
 	return &RequestManager{
-		httpClient: &http.Client{
-			Timeout: 5 * time.Second,
-		},
+		httpClient: client,
 	}
 }
 
@@ -36,7 +33,7 @@ func (rm *RequestManager) SendRequest(url, method string, something interface{})
 	}
 
 	resp, err := rm.request(url, method, bytes.NewBuffer(jsonData))
-	if err != nil || resp.StatusCode != http.StatusOK {
+	if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, err
 	}
 
@@ -54,6 +51,10 @@ func (rm *RequestManager) dataMarshal(something interface{}) ([]byte, error) {
 func (rm *RequestManager) UnmarshalResponse(resp *http.Response, something interface{}) error {
 	if resp == nil {
 		return errors.New("response is nil")
+	}
+
+	if resp.Body == nil {
+		return errors.New("response body is nil")
 	}
 
 	err := json.NewDecoder(resp.Body).Decode(something)
@@ -83,18 +84,16 @@ func (rm *RequestManager) request(url, method string, data *bytes.Buffer) (*http
 
 // initRequest initializes a request with the url, method and data
 func (rm *RequestManager) initRequest(url, method string, data *bytes.Buffer) (*http.Request, error) {
-	var err error
 	var req *http.Request
-	if method == "GET" {
-		req, err = http.NewRequest("GET", url, nil)
-	} else if method == "POST" {
-		req, err = http.NewRequest("POST", url, data)
-	} else if method == "PUT" {
-		req, err = http.NewRequest("PUT", url, data)
-	} else if method == "DELETE" {
-		req, err = http.NewRequest("DELETE", url, nil)
-	} else {
-		err = errors.New("unknown method")
+	var err error
+
+	switch method {
+	case http.MethodGet, http.MethodDelete:
+		req, err = http.NewRequest(method, url, nil)
+	case http.MethodPost, http.MethodPut, http.MethodPatch:
+		req, err = http.NewRequest(method, url, data)
+	default:
+		return nil, errors.New("unsupported method")
 	}
 	if err != nil {
 		return nil, err
@@ -103,10 +102,16 @@ func (rm *RequestManager) initRequest(url, method string, data *bytes.Buffer) (*
 	if rm.isSendMethod(method) {
 		req.Header.Set("Content-Type", "application/json")
 	}
+
 	return req, nil
 }
 
 // isSendMethod checks if the method is POST or PUT
 func (rm *RequestManager) isSendMethod(method string) bool {
-	return method == "POST" || method == "PUT"
+	switch method {
+	case http.MethodPost, http.MethodPut, http.MethodPatch:
+		return true
+	default:
+		return false
+	}
 }

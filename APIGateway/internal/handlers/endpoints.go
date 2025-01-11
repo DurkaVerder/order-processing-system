@@ -13,14 +13,14 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 
 	if err := c.BindJSON(&loginData); err != nil {
 		log.Println("Error: ", err)
-		c.JSON(400, gin.H{"error": "bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
 	url := StartURL + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["login"]
 	res, err := h.requester.SendRequest(url, http.MethodPost, loginData)
 	if err != nil {
 		log.Println("Error: ", err)
-		c.JSON(500, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
@@ -37,7 +37,7 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 	token := common.Token{}
 	if err := h.requester.UnmarshalResponse(res, &token); err != nil {
 		log.Println("Error: ", err)
-		c.JSON(500, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
@@ -52,14 +52,14 @@ func (h *HandlersManager) HandlerRegister(c *gin.Context) {
 
 	if err := c.BindJSON(&registerData); err != nil {
 		log.Println("Error: ", err)
-		c.JSON(400, gin.H{"error": "bad request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
 	url := StartURL + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["register"]
 	res, err := h.requester.SendRequest(url, http.MethodPost, registerData)
 	if err != nil {
 		log.Println("Error: ", err)
-		c.JSON(500, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
@@ -78,12 +78,18 @@ func (h *HandlersManager) HandlerRegister(c *gin.Context) {
 }
 
 func (h *HandlersManager) HandlerLogout(c *gin.Context) {
-	token, _ := c.Cookie("jwt")
+	token, err := c.Cookie("jwt")
+	if err != nil {
+		log.Println("Error: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+		return
+	}
+
 	url := StartURL + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["logout"] + "?token=" + token
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
 		log.Println("Error: ", err)
-		c.JSON(500, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
