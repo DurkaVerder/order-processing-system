@@ -48,6 +48,7 @@ func (rm *RequestManager) dataMarshal(something interface{}) ([]byte, error) {
 	return json.Marshal(something)
 }
 
+// UnmarshalResponse unmarshals the response to the something
 func (rm *RequestManager) UnmarshalResponse(resp *http.Response, something interface{}) error {
 	if resp == nil {
 		return errors.New("response is nil")
@@ -56,6 +57,7 @@ func (rm *RequestManager) UnmarshalResponse(resp *http.Response, something inter
 	if resp.Body == nil {
 		return errors.New("response body is nil")
 	}
+	defer resp.Body.Close()
 
 	err := json.NewDecoder(resp.Body).Decode(something)
 	if err != nil {
