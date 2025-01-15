@@ -3,15 +3,20 @@ package main
 import (
 	"APIGateway/config"
 	"APIGateway/internal/handlers"
+	"APIGateway/internal/requester"
 	"APIGateway/internal/server"
+	"net/http"
+	"time"
 )
 
 func main() {
 	config := config.LoadConfig()
 
-	handlers := handlers.NewHandlersManager(config)
+	requester := requester.NewRequestManager(&http.Client{Timeout: 10 * time.Second})
 
-	server := server.NewServer(handlers)
+	handlers := handlers.NewHandlersManager(requester, config)
 
-	server.Start(config.Gateway.Server.Port)
+	server := server.NewServer(handlers, config)
+
+	server.Start()
 }
