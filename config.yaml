@@ -21,6 +21,7 @@ Authentication:
       register: "/register"
       login: "/login"
       logout: "/logout"
+      validate: "/validate"
   server:
     port: ":8081"
 
