@@ -1,7 +1,6 @@
 package server
 
 import (
-	"APIGateway/common"
 	"APIGateway/config"
 	"APIGateway/internal/handlers"
 	"errors"
@@ -9,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
@@ -61,7 +61,7 @@ func (s *Server) authMiddleware(c *gin.Context) {
 		return
 	}
 
-	resp, err := http.Get(handlers.StartURL + s.cfg.Authentication.Server.Port + s.cfg.Authentication.Route.Base + s.cfg.Authentication.Route.Endpoints["auth"] + "?token=" + jwt)
+	resp, err := http.Get(handlers.StartURL + s.cfg.Authentication.Server.Port + s.cfg.Authentication.Route.Base + s.cfg.Authentication.Route.Endpoints["validate"] + "?token=" + jwt)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		c.Abort()

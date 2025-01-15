@@ -1,16 +1,16 @@
 package handlers
 
 import (
-	"APIGateway/common"
 	"log"
 	"net/http"
 
+	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/gin-gonic/gin"
 )
 
 // HandlerLogin is a handler for login
 func (h *HandlersManager) HandlerLogin(c *gin.Context) {
-	loginData := &common.AuthData{}
+	loginData := &common.AuthDataLogin{}
 
 	if err := c.BindJSON(&loginData); err != nil {
 		log.Println("Error: ", err)
@@ -50,7 +50,7 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 
 // HandlerRegister is a handler for register
 func (h *HandlersManager) HandlerRegister(c *gin.Context) {
-	registerData := &common.AuthData{}
+	registerData := &common.AuthDataRegister{}
 
 	if err := c.BindJSON(&registerData); err != nil {
 		log.Println("Error: ", err)
