@@ -12,7 +12,7 @@ CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,  -- Связь с пользователем
     total_amount DECIMAL(10, 2) NOT NULL,               -- Общая сумма заказа
-    status VARCHAR(50) NOT NULL,                        -- Текущий статус заказа
+    status VARCHAR(50),                                 -- Текущий статус заказа
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

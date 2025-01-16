@@ -20,7 +20,7 @@ type Service struct {
 }
 
 type Config struct {
-	Authentication Service
+	Status Service
 }
 
 func LoadConfig() Config {
@@ -30,14 +30,14 @@ func LoadConfig() Config {
 		log.Fatalf("Unable to read config: %v", err)
 	}
 
-	var auth Service
-	if err := viper.UnmarshalKey("Authentication", &auth); err != nil {
+	var status Service
+	if err := viper.UnmarshalKey("Status", &status); err != nil {
 		log.Fatalf("Unable to unmarshal Authentication config: %v", err)
 	}
 
 	log.Println("Config loaded successfully")
 
 	return Config{
-		Authentication: auth,
+		Status: status,
 	}
 }
