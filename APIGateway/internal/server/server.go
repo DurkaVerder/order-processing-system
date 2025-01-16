@@ -74,7 +74,8 @@ func (s *Server) authMiddleware(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
+	// Refresh token
+	c.SetCookie("jwt", jwt, 3600*72, "/", "", false, true)
 	c.Set("user_id", userId)
 	c.Next()
 }
