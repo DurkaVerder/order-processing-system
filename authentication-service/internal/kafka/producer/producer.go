@@ -5,18 +5,22 @@ import (
 	"encoding/json"
 	"log"
 
+	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/IBM/sarama"
 )
 
+// Producer is an interface for Kafka producer
 type Producer interface {
-	SendMessage(topic string, message any) error
+	SendMessage(topic string, message common.Notification) error
 }
 
+// ProducerManager is a Kafka producer
 type ProducerManager struct {
 	producer sarama.SyncProducer
 	config   *sarama.Config
 }
 
+// NewProducerManager creates a new Kafka producer
 func NewProducerManager(brokers []string) (*ProducerManager, error) {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
@@ -40,7 +44,8 @@ func NewProducerManager(brokers []string) (*ProducerManager, error) {
 	return nil, err
 }
 
-func (p *ProducerManager) SendMessage(topic string, message any) error {
+// SendMessage sends a message to a Kafka topic
+func (p *ProducerManager) SendMessage(topic string, message common.Notification) error {
 	data, err := json.Marshal(message)
 	if err != nil {
 		log.Printf("Failed to marshal message: %s", err)

@@ -39,7 +39,13 @@ func (h *HandlersManager) Register(c *gin.Context) {
 }
 
 func (h *HandlersManager) Logout(c *gin.Context) {
-	// ...
+	token := common.Token{
+		Token: c.Query("token"),
+	}
+	if err := h.service.Logout(token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 }
 
 func (h *HandlersManager) ValidateToken(c *gin.Context) {
@@ -48,7 +54,7 @@ func (h *HandlersManager) ValidateToken(c *gin.Context) {
 	}
 
 	if err := h.service.ValidateToken(token); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 

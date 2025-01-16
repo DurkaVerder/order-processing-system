@@ -3,7 +3,7 @@ module authentication-service
 go 1.23.3
 
 require (
-	github.com/DurkaVerder/common-for-order-processing-system v1.0.0
+	github.com/DurkaVerder/common-for-order-processing-system v1.0.1
 	github.com/IBM/sarama v1.45.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-redis/redis v6.15.9+incompatible

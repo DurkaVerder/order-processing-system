@@ -10,16 +10,19 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Postgres is a struct for working with PostgreSQL
 type Postgres struct {
 	db *sql.DB
 }
 
+// NewPostgres creates a new Postgres struct
 func NewPostgres() *Postgres {
 	return &Postgres{
 		db: initDb(),
 	}
 }
 
+// initDb initializes a connection to the database
 func initDb() *sql.DB {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -29,6 +32,7 @@ func initDb() *sql.DB {
 	return db
 }
 
+// FindUser finds a user in the database
 func (p *Postgres) FindUser(user common.AuthDataLogin) (int, error) {
 	var userId int
 	err := p.db.QueryRow(findUserQuery, user.Login, user.Password).Scan(&userId)
@@ -39,6 +43,7 @@ func (p *Postgres) FindUser(user common.AuthDataLogin) (int, error) {
 	return userId, nil
 }
 
+// AddUser adds a user to the database
 func (p *Postgres) AddUser(user common.AuthDataRegister) error {
 	time := time.Now()
 	_, err := p.db.Exec(addUserQuery, user.Email, user.Login, user.Password, user.Username, time, time)

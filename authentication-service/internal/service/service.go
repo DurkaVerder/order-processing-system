@@ -2,8 +2,11 @@ package service
 
 import (
 	"authentication-service/internal/jwt"
+	"authentication-service/internal/kafka"
+	"authentication-service/internal/kafka/producer"
 	"authentication-service/internal/repository"
 	"errors"
+	"log"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"golang.org/x/crypto/bcrypt"
@@ -17,14 +20,16 @@ type Service interface {
 }
 
 type ServiceManager struct {
-	db    repository.DateBase
-	cache repository.Cache
+	db       repository.DateBase
+	cache    repository.Cache
+	producer producer.Producer
 }
 
-func NewServiceManager(db repository.DateBase, cache repository.Cache) *ServiceManager {
+func NewServiceManager(db repository.DateBase, cache repository.Cache, producer producer.Producer) *ServiceManager {
 	return &ServiceManager{
-		db:    db,
-		cache: cache,
+		db:       db,
+		cache:    cache,
+		producer: producer,
 	}
 }
 
@@ -60,6 +65,14 @@ func (s *ServiceManager) Register(user common.AuthDataRegister) error {
 		return err
 	}
 
+	go func() {
+		if err := s.sendMessages(user); err != nil {
+			log.Printf("Error sending message: %v", err)
+			return
+		}
+		log.Printf("Message sent to %s", user.Email)
+	}()
+
 	return nil
 }
 
@@ -92,4 +105,22 @@ func (s *ServiceManager) hashPassword(password string) (string, error) {
 	}
 	return string(hashedPassword), nil
 
+}
+
+func (s *ServiceManager) sendMessages(data common.AuthDataRegister) error {
+	notification := s.createRegisterNotification(data)
+
+	if err := s.producer.SendMessage(kafka.NotificationTopic, notification); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *ServiceManager) createRegisterNotification(data common.AuthDataRegister) common.Notification {
+	return common.Notification{
+		To:      data.Email,
+		Subject: "Registration",
+		Body:    "You have successfully registered",
+	}
 }
