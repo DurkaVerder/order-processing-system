@@ -20,12 +20,7 @@ type Service struct {
 }
 
 type Config struct {
-	Gateway        Service
 	Authentication Service
-	Order          Service
-	Status         Service
-	Payment        Service
-	History        Service
 }
 
 func LoadConfig() Config {
@@ -39,7 +34,7 @@ func LoadConfig() Config {
 	if err := viper.UnmarshalKey("Authentication", &auth); err != nil {
 		log.Fatalf("Unable to unmarshal Authentication config: %v", err)
 	}
-	
+
 	log.Println("Config loaded successfully")
 
 	return Config{
