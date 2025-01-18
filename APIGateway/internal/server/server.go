@@ -39,7 +39,6 @@ func (s *Server) Start() {
 		protected.GET(s.cfg.Gateway.Route.Endpoints["get_orders"], s.handlers.HandlerGetOrders)
 		protected.GET(s.cfg.Gateway.Route.Endpoints["get_order"], s.handlers.HandlerGetOrder)
 		protected.DELETE(s.cfg.Gateway.Route.Endpoints["delete_order"], s.handlers.HandlerDeleteOrder)
-		protected.GET(s.cfg.Gateway.Route.Endpoints["status_order"], s.handlers.HandlerStatusOrder)
 		protected.GET(s.cfg.Gateway.Route.Endpoints["history_order"], s.handlers.HandlerHistoryOrder)
 	}
 	auth := r.Group(s.cfg.Gateway.Route.Base + "/auth")

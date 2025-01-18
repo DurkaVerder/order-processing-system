@@ -22,12 +22,12 @@ func initDb() *sql.DB {
 	return db
 }
 
-func (p *Postgres) UpdateStatus(orderID int, status string) error {
-	_, err := p.db.Exec(updateStatusQuery, status, orderID)
-	return err
-}
-
-func (p *Postgres) CreateRecordStatus(orderID int, status string) error {
-	_, err := p.db.Exec(createRecordStatusQuery, orderID, status)
-	return err
+func (p *Postgres) GetUserEmailByOrderId(orderId int) (string, error) {
+	var email string
+	err := p.db.QueryRow("SELECT email FROM users WHERE order_id=$1", orderId).Scan(&email)
+	if err != nil {
+		log.Printf("Failed to get user email: %s", err)
+		return "", err
+	}
+	return email, nil
 }

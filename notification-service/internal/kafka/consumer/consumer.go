@@ -3,8 +3,8 @@ package consumer
 import (
 	"encoding/json"
 	"log"
-	"status-service/internal/kafka"
-	"status-service/internal/service"
+	"notification-service/internal/kafka"
+	"notification-service/internal/service"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/IBM/sarama"
@@ -59,17 +59,24 @@ func (c *ConsumerManager) Start() {
 			log.Printf("Received message: %s", msg.Value)
 
 			go func() {
-				status := common.StatusOrder{}
-				if err := json.Unmarshal(msg.Value, &status); err != nil {
+				notify := common.DataForNotify{}
+				if err := json.Unmarshal(msg.Value, &notify); err != nil {
 					log.Printf("Failed to unmarshal message: %s", err)
 					return
 				}
 
-				if err := c.service.ChangeStatus(status.OrderId, status.Status); err != nil {
-					log.Printf("Failed to change status: %s", err)
+				notification, err := c.service.CreateNotification(notify)
+				if err != nil {
+					log.Printf("Failed to create notification: %s", err)
 					return
 				}
-				log.Println("Status changed")
+
+				if err := c.service.SendNotification(notification); err != nil {
+					log.Printf("Failed to send notification: %s", err)
+					return
+				}
+
+				log.Println("Notification has been sent")
 			}()
 
 		case err := <-c.consumePartition.Errors():

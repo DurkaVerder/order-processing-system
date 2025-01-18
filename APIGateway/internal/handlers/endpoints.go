@@ -191,29 +191,6 @@ func (h *HandlersManager) HandlerDeleteOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "order deleted"})
 }
 
-// HandlerStatusOrder is a handler for getting order status
-func (h *HandlersManager) HandlerStatusOrder(c *gin.Context) {
-	orderId := c.Param("order_id")
-
-	url := StartURL + h.cfg.Status.Server.Port + h.cfg.Status.Route.Base + h.cfg.Status.Route.Endpoints["status_order"] + "?order_id=" + orderId
-	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
-	if err != nil || res.StatusCode != http.StatusOK {
-		log.Println("Error: ", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
-		return
-	}
-
-	status := common.StatusOrder{}
-
-	if err := h.requester.UnmarshalResponse(res, &status); err != nil {
-		log.Println("Error: ", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
-		return
-	}
-
-	c.JSON(http.StatusOK, status)
-}
-
 // HandlerHistoryOrder is a handler for getting order history
 func (h *HandlersManager) HandlerHistoryOrder(c *gin.Context) {
 	orderId := c.Param("order_id")
