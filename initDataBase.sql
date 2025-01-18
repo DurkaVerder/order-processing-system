@@ -30,7 +30,6 @@ CREATE TABLE order_status_history (
     id SERIAL PRIMARY KEY,
     order_id INT REFERENCES orders(id) ON DELETE CASCADE,  -- Связь с заказом
     status VARCHAR(50) NOT NULL,                          -- Новый статус
-    changed_by INT REFERENCES users(id) ON DELETE SET NULL,  -- Кто изменил статус
     changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

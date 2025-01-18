@@ -9,7 +9,6 @@ Gateway:
       get_orders: "/order/get"
       get_order: "/order/{order_id}/get"
       delete_order: "/order/{order_id}/delete"
-      status_order: "/order/{order_id}/status"
       history_order: "/order/{order_id}/history"
   server:
     port: ":8080"
@@ -36,14 +35,6 @@ Order:
   server:
     port: ":8082"
 
-Status:
-  route:
-    base: "/v1/status"
-    endpoints:
-      status_order: "/get"
-  server:
-    port: ":8083"
-
 Payment:
   route:
     base: "/v1/payment"
@@ -51,7 +42,7 @@ Payment:
       pay_payment: "/pay"
       status_payment: "/status"
   server:
-    port: ":8084"
+    port: ":8083"
 
 History:
   route:
@@ -59,6 +50,6 @@ History:
     endpoints:
       history_order: "/get"
   server:
-    port: ":8085"
+    port: ":8084"
 
 # Всё через пагинацию!!!
