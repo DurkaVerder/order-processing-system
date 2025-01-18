@@ -3,7 +3,7 @@ module status-service
 go 1.23.3
 
 require (
-	github.com/DurkaVerder/common-for-order-processing-system v1.0.3
+	github.com/DurkaVerder/common-for-order-processing-system v1.0.4
 	github.com/IBM/sarama v1.45.0
 )
 

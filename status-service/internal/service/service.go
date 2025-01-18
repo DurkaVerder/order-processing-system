@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"status-service/internal/kafka/producer"
 	"status-service/internal/repository"
 
@@ -33,22 +34,20 @@ func (s *ServiceManager) ChangeStatus(orderId int, status string) error {
 		return err
 	}
 
-
-
-	// notify := s.createMessage(orderId, status, "")
-	// if err := s.producer.SendMessage("notification", notify); err != nil {
-
-	// }
-
+	go func() {
+		notify := s.createMessage(orderId, status)
+		if err := s.producer.SendMessage("notification", notify); err != nil {
+			log.Printf("Error while sending message: %v", err)
+		}
+	}()
 	return nil
 }
 
-func (s *ServiceManager) createMessage(orderId int, status, email string) common.DataForNotify {
+func (s *ServiceManager) createMessage(orderId int, status string) common.DataForNotify {
 	notify := common.DataForNotify{
-		Event:     "update_status",
-		OrderId:   orderId,
-		Status:    status,
-		UserEmail: email,
+		Event:   "update_status",
+		OrderId: orderId,
+		Status:  status,
 	}
 	return notify
 }
