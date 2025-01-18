@@ -1,6 +1,8 @@
 package service
 
 import (
+	"log"
+	"order-service/internal/kafka"
 	"order-service/internal/kafka/producer"
 	"order-service/internal/repository"
 	"time"
@@ -35,19 +37,15 @@ func (s *ServiceManager) AddOrder(order common.Order) error {
 		return err
 	}
 
-// 	go func() {
-// 		msg, err := s.createMessage(order)
-// 		if err != nil {
-// 			log.Printf("Error while creating message: %v", err)
-// 			return
-// 		}
+	go func() {
+		msg := s.createMessage(order)
 
-// 		if err := s.producer.SendMessage(kafka.NotificationTopic, msg); err != nil {
-// 			log.Printf("Error while sending message: %v", err)
-// 			return
-// 		}
-// 		log.Printf("Message sent: %v", msg)
-// 	}()
+		if err := s.producer.SendMessage(kafka.NotificationTopic, msg); err != nil {
+			log.Printf("Error while sending message: %v", err)
+			return
+		}
+		log.Printf("Message sent: %v", msg)
+	}()
 
 	return nil
 }
@@ -60,18 +58,13 @@ func (s *ServiceManager) initOrder(time time.Time, order common.Order) common.Or
 	return order
 }
 
-// func (s *ServiceManager) createMessage(order common.Order) (common.DataForNotify, error) {
-// 	userEmail, err := s.db.GetUserEmail(strconv.Itoa(order.UserId))
-// 	if err != nil {
-// 		return common.Notification{}, err
-// 	}
-
-// 	return common.Notification{
-// 		To:      userEmail,
-// 		Subject: "Order created",
-// 		Body:    fmt.Sprintf("Order with id %v has been created\n\nTotal amount %d", order.Id, order.TotalAmount),
-// 	}, nil
-// }
+func (s *ServiceManager) createMessage(order common.Order) common.DataForNotify {
+	return common.DataForNotify{
+		Event:   "order_created",
+		OrderId: order.Id,
+		Status:  "created",
+	}
+}
 
 func (s *ServiceManager) GetOrder(id string) (common.Order, error) {
 	return s.db.GetOrder(id)

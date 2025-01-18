@@ -2,6 +2,8 @@ github.com/DurkaVerder/common-for-order-processing-system v1.0.2 h1:I169JEoYXVdf
 github.com/DurkaVerder/common-for-order-processing-system v1.0.2/go.mod h1:8lD/F/hveurUQXTkfczuOzZlMH/44ZH3GIyacIrA3VQ=
 github.com/DurkaVerder/common-for-order-processing-system v1.0.3 h1:rMA4p867DOITNKumhjERLDU7OqeGP5AvBJwj9hZU56s=
 github.com/DurkaVerder/common-for-order-processing-system v1.0.3/go.mod h1:8lD/F/hveurUQXTkfczuOzZlMH/44ZH3GIyacIrA3VQ=
+github.com/DurkaVerder/common-for-order-processing-system v1.0.4 h1:Dm8BkMGEH82rlB7s7XmmL08eTtqr6QY8injPBA/LSvw=
+github.com/DurkaVerder/common-for-order-processing-system v1.0.4/go.mod h1:8lD/F/hveurUQXTkfczuOzZlMH/44ZH3GIyacIrA3VQ=
 github.com/IBM/sarama v1.45.0 h1:IzeBevTn809IJ/dhNKhP5mpxEXTmELuezO2tgHD9G5E=
 github.com/IBM/sarama v1.45.0/go.mod h1:EEay63m8EZkeumco9TDXf2JT3uDnZsZqFgV46n4yZdY=
 github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=
