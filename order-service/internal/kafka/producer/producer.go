@@ -11,7 +11,7 @@ import (
 
 // Producer is an interface for Kafka producer
 type Producer interface {
-	SendMessage(topic string, message common.Notification) error
+	SendMessage(topic string, message common.DataForNotify) error
 }
 
 // ProducerManager is a Kafka producer
@@ -45,7 +45,7 @@ func NewProducerManager(brokers []string) (*ProducerManager, error) {
 }
 
 // SendMessage sends a message to a Kafka topic
-func (p *ProducerManager) SendMessage(topic string, message common.Notification) error {
+func (p *ProducerManager) SendMessage(topic string, message common.DataForNotify) error {
 	data, err := json.Marshal(message)
 	if err != nil {
 		log.Printf("Failed to marshal message: %s", err)
@@ -66,4 +66,3 @@ func (p *ProducerManager) SendMessage(topic string, message common.Notification)
 	log.Printf("Message sent to partition %d at offset %d\n", partition, offset)
 	return nil
 }
-
