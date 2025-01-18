@@ -20,7 +20,6 @@ type Handlers interface {
 	HandlerGetOrders(c *gin.Context)
 	HandlerGetOrder(c *gin.Context)
 	HandlerDeleteOrder(c *gin.Context)
-	HandlerStatusOrder(c *gin.Context)
 	HandlerHistoryOrder(c *gin.Context)
 }
 
