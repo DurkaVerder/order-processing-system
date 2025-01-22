@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 type Postgres struct {
@@ -15,7 +17,7 @@ func NewPostgres() *Postgres {
 }
 
 func initDb() *sql.DB {
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("Error opening database: %q", err)
 	}

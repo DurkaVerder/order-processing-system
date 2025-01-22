@@ -18,7 +18,7 @@ func main() {
 
 	service := service.NewServiceManager(postgres)
 
-	consumer := consumer.NewConsumerManager([]string{os.Getenv("KAFKA_BROKER")}, service)
+	consumer := consumer.NewConsumerManager([]string{os.Getenv("KAFKA_BROKERS")}, service)
 	consumer.Subscribe(kafka.NotificationTopic)
 
 	ctx, cancel := context.WithCancel(context.Background())
