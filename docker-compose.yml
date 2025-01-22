@@ -48,11 +48,11 @@ services:
     networks:
       - order_processing_network
 
-  APIGateway:
+  api-gateway:
     build:
       context: ./APIGateway
       dockerfile: Dockerfile
-    container_name: APIGateway
+    container_name: api-gateway
     ports:
       - "8080:8080"
     depends_on:
@@ -71,6 +71,7 @@ services:
     depends_on:
       - kafka
       - postgres
+      - redis
     environment:
       - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
       - KAFKA_BROKERS=kafka:9092
