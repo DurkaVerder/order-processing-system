@@ -1,0 +1,55 @@
+Gateway:
+  route:
+    base: "/api/v1"
+    endpoints:
+      register: "/register"
+      login: "/login"
+      logout: "/logout"
+      create_order: "/order/create"
+      get_orders: "/order/get"
+      get_order: "/order/{order_id}/get"
+      delete_order: "/order/{order_id}/delete"
+      history_order: "/order/{order_id}/history"
+  server:
+    port: ":8080"
+
+Authentication:
+  route:
+    base: "/v1/auth"
+    endpoints:
+      register: "/register"
+      login: "/login"
+      logout: "/logout"
+      validate: "/validate"
+  server:
+    port: ":8081"
+
+Order:
+  route:
+    base: "/v1/order"
+    endpoints:
+      create_order: "/create"
+      get_orders: "/get/all"
+      get_order: "/get"
+      delete_order: "/delete"
+  server:
+    port: ":8082"
+
+Payment:
+  route:
+    base: "/v1/payment"
+    endpoints:
+      pay_payment: "/pay"
+      status_payment: "/status"
+  server:
+    port: ":8083"
+
+History:
+  route:
+    base: "/v1/history"
+    endpoints:
+      history_order: "/get"
+  server:
+    port: ":8084"
+
+# Всё через пагинацию!!!

@@ -40,6 +40,14 @@ services:
     networks:
       - order_processing_network
 
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - order_processing_network
+
   APIGateway:
     build:
       context: ./APIGateway
@@ -51,23 +59,55 @@ services:
       - kafka
       - postgres
     environment:
-      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
-      - KAFKA_BROKERS=kafka:9092
+      - CONFIG_PATH=config.yaml
     networks:
       - order_processing_network
 
-  order-adder:
+  authentication-service:
     build:
-      context: ./order-adder
+      context: ./authentication-service
       dockerfile: Dockerfile
-    container_name: order-adder
+    container_name: authentication-service
     depends_on:
       - kafka
       - postgres
-      - api-server
     environment:
       - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
       - KAFKA_BROKERS=kafka:9092
+      - REDIS_URL=redis:6379
+      - CONFIG_PATH=config.yaml
+      - SECRET_KEY=asd324fA23Sw2er12gn5sa2
+    networks:
+      - order_processing_network
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+      - MAIL=hotelbooking02@mail.ru
+      - EMAIL_PASSWORD=hPWFLzDD5mqWMPy1G1ty
+    networks:
+      - order_processing_network
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+      - CONFIG_PATH=config.yaml
     networks:
       - order_processing_network
 
