@@ -117,10 +117,9 @@ func (s *ServiceManager) sendMessages(data common.AuthDataRegister) error {
 	return nil
 }
 
-func (s *ServiceManager) createRegisterNotification(data common.AuthDataRegister) common.Notification {
-	return common.Notification{
-		To:      data.Email,
-		Subject: "Registration",
-		Body:    "You have successfully registered",
+func (s *ServiceManager) createRegisterNotification(data common.AuthDataRegister) common.DataForNotify {
+	return common.DataForNotify{
+		Event:     "register",
+		UserEmail: data.Email,
 	}
 }
