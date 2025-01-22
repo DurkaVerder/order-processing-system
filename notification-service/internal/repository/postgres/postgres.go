@@ -24,7 +24,7 @@ func initDb() *sql.DB {
 
 func (p *Postgres) GetUserEmailByOrderId(orderId int) (string, error) {
 	var email string
-	err := p.db.QueryRow("SELECT email FROM users WHERE order_id=$1", orderId).Scan(&email)
+	err := p.db.QueryRow(SelectUserEmailByOrderId, orderId).Scan(&email)
 	if err != nil {
 		log.Printf("Failed to get user email: %s", err)
 		return "", err
