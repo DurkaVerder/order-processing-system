@@ -44,12 +44,19 @@ func (s *ServiceManager) CreateNotification(notify common.DataForNotify) error {
 	case "order_updated":
 		notification.Subject = "Order updated"
 		notification.Body = "Order has been updated"
+	case "register":
+		notification.Subject = "Register"
+		notification.Body = "Welcome!"
+		notification.To = notify.UserEmail
 	}
-	email, err := s.db.GetUserEmailByOrderId(notify.OrderId)
-	if err != nil {
-		return err
+	if notification.To == "" {
+		email, err := s.db.GetUserEmailByOrderId(notify.OrderId)
+		if err != nil {
+			return err
+		}
+		notification.To = email
 	}
-	notification.To = email
+
 	select {
 	case s.mailQueue <- notification:
 		log.Println("msg send in queue")
