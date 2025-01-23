@@ -4,6 +4,7 @@ import (
 	"authentication-service/internal/kafka"
 	"encoding/json"
 	"log"
+	"time"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/IBM/sarama"
@@ -38,6 +39,7 @@ func NewProducerManager(brokers []string) (*ProducerManager, error) {
 			}, nil
 		}
 		log.Printf("Failed to create producer: %s, retrying...", err)
+		time.Sleep(time.Second * 2)
 	}
 	log.Printf("Failed to create producer: %s", err)
 

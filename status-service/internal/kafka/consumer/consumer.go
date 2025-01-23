@@ -5,6 +5,7 @@ import (
 	"log"
 	"status-service/internal/kafka"
 	"status-service/internal/service"
+	"time"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/IBM/sarama"
@@ -36,6 +37,7 @@ func NewConsumerManager(brokers []string, service service.Service) *ConsumerMana
 			}
 		}
 		log.Printf("Failed to create consumer: %s, retrying...", err)
+		time.Sleep(time.Second * 2)
 	}
 
 	log.Fatalln("Failed to create consumer")
