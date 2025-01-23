@@ -6,7 +6,7 @@ import (
 
 // DateBase is an interface that contains methods for working with a database
 type DateBase interface {
-	FindUser(user common.AuthDataLogin) (int, error)
+	FindUser(user common.AuthDataLogin) (int, string, error)
 	AddUser(user common.AuthDataRegister) error
 }
 

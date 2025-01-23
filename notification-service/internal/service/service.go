@@ -82,6 +82,7 @@ func (s *ServiceManager) SendNotification(notify common.Notification) error {
 		log.Printf("Error send msg %s", err)
 		return err
 	}
+	log.Printf("Send msg to: %s", notify.To)
 
 	return nil
 }

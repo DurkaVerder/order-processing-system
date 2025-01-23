@@ -33,14 +33,15 @@ func initDb() *sql.DB {
 }
 
 // FindUser finds a user in the database
-func (p *Postgres) FindUser(user common.AuthDataLogin) (int, error) {
+func (p *Postgres) FindUser(user common.AuthDataLogin) (int, string, error) {
 	var userId int
-	err := p.db.QueryRow(findUserQuery, user.Login, user.Password).Scan(&userId)
+	var password string
+	err := p.db.QueryRow(findUserQuery, user.Login).Scan(&userId, &password)
 	if err != nil {
-		return -1, err
+		return -1, "", err
 	}
 
-	return userId, nil
+	return userId, password, nil
 }
 
 // AddUser adds a user to the database

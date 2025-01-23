@@ -10,7 +10,7 @@ import (
 
 // HandlerLogin is a handler for login
 func (h *HandlersManager) HandlerLogin(c *gin.Context) {
-	loginData := &common.AuthDataLogin{}
+	loginData := common.AuthDataLogin{}
 
 	if err := c.BindJSON(&loginData); err != nil {
 		log.Println("Error: ", err)
@@ -50,7 +50,7 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 
 // HandlerRegister is a handler for register
 func (h *HandlersManager) HandlerRegister(c *gin.Context) {
-	registerData := &common.AuthDataRegister{}
+	registerData := common.AuthDataRegister{}
 
 	if err := c.BindJSON(&registerData); err != nil {
 		log.Println("Error: ", err)
@@ -61,10 +61,11 @@ func (h *HandlersManager) HandlerRegister(c *gin.Context) {
 	res, err := h.requester.SendRequest(url, http.MethodPost, registerData)
 	if err != nil {
 		log.Println("Error: ", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error send request"})
 		return
 	}
-
+	defer res.Body.Close()
+	
 	if res.StatusCode == http.StatusBadRequest {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid login or password"})
 		return
@@ -101,7 +102,7 @@ func (h *HandlersManager) HandlerLogout(c *gin.Context) {
 
 // HandlerCreateOrder is a handler for creating order
 func (h *HandlersManager) HandlerCreateOrder(c *gin.Context) {
-	newOrder := &common.Order{}
+	newOrder := common.Order{}
 	if err := c.BindJSON(&newOrder); err != nil {
 		log.Println("Error: ", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
@@ -145,7 +146,7 @@ func (h *HandlersManager) HandlerGetOrders(c *gin.Context) {
 	}
 
 	orders := []common.Order{}
-	if err := h.requester.UnmarshalResponse(res, &orders); err != nil {
+	if err := h.requester.UnmarshalResponse(res, orders); err != nil {
 		log.Println("Error: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return

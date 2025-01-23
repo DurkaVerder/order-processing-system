@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"net/http"
+	"time"
 )
 
 // Requester is an interface for sending requests
 type Requester interface {
-	SendRequest(url, method string, something interface{}) (*http.Response, error)
-	UnmarshalResponse(resp *http.Response, something interface{}) error
+	SendRequest(url, method string, something any) (*http.Response, error)
+	UnmarshalResponse(resp *http.Response, something any) error
 }
 
 // RequestManager is a struct that implements Requester interface
@@ -20,20 +23,30 @@ type RequestManager struct {
 
 // NewRequestManager is a constructor for RequestManager
 func NewRequestManager(client *http.Client) *RequestManager {
+	if client == nil {
+		client = &http.Client{Timeout: 5 * time.Second}
+	}
 	return &RequestManager{
 		httpClient: client,
 	}
 }
 
 // RequestData sends a request to the url with the method and the data
-func (rm *RequestManager) SendRequest(url, method string, something interface{}) (*http.Response, error) {
+func (rm *RequestManager) SendRequest(url, method string, something any) (*http.Response, error) {
 	jsonData, err := rm.dataMarshal(something)
 	if err != nil {
+		log.Printf("Error marshal data %s", err)
 		return nil, err
 	}
 
 	resp, err := rm.request(url, method, bytes.NewBuffer(jsonData))
 	if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		if resp != nil && resp.Body != nil {
+			resp.Body.Close()
+		}
+		if err == nil {
+			err = fmt.Errorf("request failed with status code: %d", resp.StatusCode)
+		}
 		return nil, err
 	}
 
@@ -41,15 +54,15 @@ func (rm *RequestManager) SendRequest(url, method string, something interface{})
 }
 
 // dataMarshal marshals the data to json
-func (rm *RequestManager) dataMarshal(something interface{}) ([]byte, error) {
+func (rm *RequestManager) dataMarshal(something any) ([]byte, error) {
 	if something == nil {
-		return []byte{}, nil
+		return nil, nil
 	}
 	return json.Marshal(something)
 }
 
 // UnmarshalResponse unmarshals the response to the something
-func (rm *RequestManager) UnmarshalResponse(resp *http.Response, something interface{}) error {
+func (rm *RequestManager) UnmarshalResponse(resp *http.Response, something any) error {
 	if resp == nil {
 		return errors.New("response is nil")
 	}

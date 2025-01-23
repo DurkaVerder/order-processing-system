@@ -22,8 +22,9 @@ func GenerateToken(userID int) (common.Token, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(os.Getenv("SECRET_KEY"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
+		fmt.Printf("Error create jwt: %s", err)
 		return common.Token{}, err
 	}
 

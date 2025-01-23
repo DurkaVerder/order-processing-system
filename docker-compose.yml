@@ -60,6 +60,7 @@ services:
       - postgres
     environment:
       - CONFIG_PATH=config.yaml
+      - SECRET_KEY=supkyeersecret
     networks:
       - order_processing_network
 
@@ -77,7 +78,7 @@ services:
       - KAFKA_BROKERS=kafka:9092
       - REDIS_URL=redis:6379
       - CONFIG_PATH=config.yaml
-      - SECRET_KEY=asd324fA23Sw2er12gn5sa2
+      - SECRET_KEY=supkyeersecret
     networks:
       - order_processing_network
 

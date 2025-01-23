@@ -6,6 +6,7 @@ import (
 	"authentication-service/internal/kafka/producer"
 	"authentication-service/internal/repository"
 	"errors"
+	"fmt"
 	"log"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
@@ -34,19 +35,18 @@ func NewServiceManager(db repository.DateBase, cache repository.Cache, producer 
 }
 
 func (s *ServiceManager) Login(user common.AuthDataLogin) (common.Token, error) {
-	hashedPassword, err := s.hashPassword(user.Password)
+	userId, dbPassword, err := s.db.FindUser(user)
 	if err != nil {
 		return common.Token{}, err
 	}
-	user.Password = hashedPassword
 
-	userId, err := s.db.FindUser(user)
-	if err != nil {
-		return common.Token{}, err
+	if err := s.checkPassword(dbPassword, user.Password); err != nil {
+		return common.Token{}, fmt.Errorf("invalid password")
 	}
 
 	token, err := jwt.GenerateToken(userId)
 	if err != nil {
+		log.Printf("Error generate jwt: %s", err)
 		return common.Token{}, err
 	}
 
@@ -86,6 +86,7 @@ func (s *ServiceManager) Logout(token common.Token) error {
 }
 
 func (s *ServiceManager) ValidateToken(token common.Token) error {
+	fmt.Println("Get token: %s", token.Token)
 	isRevoked, err := s.cache.IsTokenRevoked(token.Token)
 	if err != nil {
 		return err
@@ -122,4 +123,8 @@ func (s *ServiceManager) createRegisterNotification(data common.AuthDataRegister
 		Event:     "register",
 		UserEmail: data.Email,
 	}
+}
+
+func (s *ServiceManager) checkPassword(hashedPassword, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
