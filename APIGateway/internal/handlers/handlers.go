@@ -8,7 +8,9 @@ import (
 )
 
 const (
-	StartURL = "http://localhost"
+	StartURLauth = "http://authentication-service"
+	StartURLorder = "http://order-service"
+	StartURLhistory = "http://history-service"
 )
 
 // Handlers is an interface that defines the methods that the handlers must implement

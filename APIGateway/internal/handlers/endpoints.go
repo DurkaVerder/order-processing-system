@@ -17,7 +17,7 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
-	url := StartURL + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["login"]
+	url := StartURLauth + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["login"]
 	res, err := h.requester.SendRequest(url, http.MethodPost, loginData)
 	if err != nil {
 		log.Println("Error: ", err)
@@ -57,7 +57,7 @@ func (h *HandlersManager) HandlerRegister(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
-	url := StartURL + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["register"]
+	url := StartURLauth + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["register"]
 	res, err := h.requester.SendRequest(url, http.MethodPost, registerData)
 	if err != nil {
 		log.Println("Error: ", err)
@@ -88,7 +88,7 @@ func (h *HandlersManager) HandlerLogout(c *gin.Context) {
 		return
 	}
 
-	url := StartURL + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["logout"] + "?token=" + token
+	url := StartURLauth + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["logout"] + "?token=" + token
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
 		log.Println("Error: ", err)
@@ -114,7 +114,7 @@ func (h *HandlersManager) HandlerCreateOrder(c *gin.Context) {
 		return
 	}
 
-	url := StartURL + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["create_order"] + "?user_id=" + userId.(string)
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["create_order"] + "?user_id=" + userId.(string)
 	res, err := h.requester.SendRequest(url, http.MethodPost, newOrder)
 	if err != nil || res.StatusCode != http.StatusCreated {
 		log.Println("Error: ", err)
@@ -136,7 +136,7 @@ func (h *HandlersManager) HandlerGetOrders(c *gin.Context) {
 		return
 	}
 
-	url := StartURL + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_orders"] + "?user_id=" + userId.(string)
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_orders"] + "?user_id=" + userId.(string)
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
 		log.Println("Error: ", err)
@@ -158,7 +158,7 @@ func (h *HandlersManager) HandlerGetOrders(c *gin.Context) {
 func (h *HandlersManager) HandlerGetOrder(c *gin.Context) {
 	orderId := c.Param("order_id")
 
-	url := StartURL + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_order"] + "?order_id=" + orderId
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_order"] + "?order_id=" + orderId
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
 		log.Println("Error: ", err)
@@ -180,7 +180,7 @@ func (h *HandlersManager) HandlerGetOrder(c *gin.Context) {
 func (h *HandlersManager) HandlerDeleteOrder(c *gin.Context) {
 	orderId := c.Param("order_id")
 
-	url := StartURL + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["delete_order"] + "?order_id=" + orderId
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["delete_order"] + "?order_id=" + orderId
 	res, err := h.requester.SendRequest(url, http.MethodDelete, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
 		log.Println("Error: ", err)
@@ -195,7 +195,7 @@ func (h *HandlersManager) HandlerDeleteOrder(c *gin.Context) {
 func (h *HandlersManager) HandlerHistoryOrder(c *gin.Context) {
 	orderId := c.Param("order_id")
 
-	url := StartURL + h.cfg.History.Server.Port + h.cfg.History.Route.Base + h.cfg.History.Route.Endpoints["history_order"] + "?order_id=" + orderId
+	url := StartURLhistory + h.cfg.History.Server.Port + h.cfg.History.Route.Base + h.cfg.History.Route.Endpoints["history_order"] + "?order_id=" + orderId
 
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {

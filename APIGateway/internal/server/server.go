@@ -60,7 +60,7 @@ func (s *Server) authMiddleware(c *gin.Context) {
 		return
 	}
 
-	resp, err := http.Get(handlers.StartURL + s.cfg.Authentication.Server.Port + s.cfg.Authentication.Route.Base + s.cfg.Authentication.Route.Endpoints["validate"] + "?token=" + jwt)
+	resp, err := http.Get(handlers.StartURLauth + s.cfg.Authentication.Server.Port + s.cfg.Authentication.Route.Base + s.cfg.Authentication.Route.Endpoints["validate"] + "?token=" + jwt)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		c.Abort()
