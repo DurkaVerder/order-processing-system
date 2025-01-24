@@ -38,9 +38,11 @@ func (r *Redis) RevokeToken(token string) error {
 // IsTokenRevoked checks if a token is revoked
 func (r *Redis) IsTokenRevoked(token string) (bool, error) {
 	val, err := r.rdb.Get(token).Result()
-	if err != redis.Nil {
-		fmt.Printf("Error in request Redis: %s", err)
-		return false, err
+	if err != nil {
+		if err != redis.Nil {
+			fmt.Printf("Error in request Redis: %s", err)
+			return false, err
+		}
 	}
 
 	if val == "" {

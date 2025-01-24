@@ -86,7 +86,7 @@ func (s *ServiceManager) Logout(token common.Token) error {
 }
 
 func (s *ServiceManager) ValidateToken(token common.Token) error {
-	fmt.Println("Get token: %s", token.Token)
+	fmt.Printf("Get token: %s", token.Token)
 	isRevoked, err := s.cache.IsTokenRevoked(token.Token)
 	if err != nil {
 		return err

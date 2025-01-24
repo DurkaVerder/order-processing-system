@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,7 @@ func (h *HandlersManager) HandlerRegister(c *gin.Context) {
 		return
 	}
 	defer res.Body.Close()
-	
+
 	if res.StatusCode == http.StatusBadRequest {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid login or password"})
 		return
@@ -114,8 +115,9 @@ func (h *HandlersManager) HandlerCreateOrder(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
-
-	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["create_order"] + "?user_id=" + userId.(string)
+	userIdStr := strconv.Itoa(userId.(int))
+	
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["create_order"] + "?user_id=" + userIdStr
 	res, err := h.requester.SendRequest(url, http.MethodPost, newOrder)
 	if err != nil || res.StatusCode != http.StatusCreated {
 		log.Println("Error: ", err)
@@ -136,8 +138,9 @@ func (h *HandlersManager) HandlerGetOrders(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		return
 	}
+	userIdStr := strconv.Itoa(userId.(int))
 
-	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_orders"] + "?user_id=" + userId.(string)
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_orders"] + "?user_id=" + userIdStr
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
 		log.Println("Error: ", err)

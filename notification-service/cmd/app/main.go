@@ -24,9 +24,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	consumer.Start(ctx)
+	go consumer.Start(ctx)
 
-	service.StarProcessingAndSendingMsg(5, ctx)
+	go service.StarProcessingAndSendingMsg(5, ctx)
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
