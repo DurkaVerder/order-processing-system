@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/go-redis/redis"
@@ -38,7 +39,10 @@ func (r *Redis) RevokeToken(token string) error {
 func (r *Redis) IsTokenRevoked(token string) (bool, error) {
 	val, err := r.rdb.Get(token).Result()
 	if err != nil {
-		return false, err
+		if err != redis.Nil {
+			fmt.Printf("Error in request Redis: %s", err)
+			return false, err
+		}
 	}
 
 	if val == "" {

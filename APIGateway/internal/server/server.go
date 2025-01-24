@@ -4,9 +4,9 @@ import (
 	"APIGateway/config"
 	"APIGateway/internal/handlers"
 	"errors"
+	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/gin-gonic/gin"
@@ -60,8 +60,15 @@ func (s *Server) authMiddleware(c *gin.Context) {
 		return
 	}
 
-	resp, err := http.Get(handlers.StartURL + s.cfg.Authentication.Server.Port + s.cfg.Authentication.Route.Base + s.cfg.Authentication.Route.Endpoints["validate"] + "?token=" + jwt)
-	if err != nil || resp.StatusCode != http.StatusOK {
+	resp, err := http.Get(handlers.StartURLauth + s.cfg.Authentication.Server.Port + s.cfg.Authentication.Route.Base + s.cfg.Authentication.Route.Endpoints["validate"] + "?token=" + jwt)
+	if err != nil {
+		log.Printf("Error check valid: %s", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.Abort()
+		return
+	}
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Invalid token")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		c.Abort()
 		return
@@ -69,6 +76,7 @@ func (s *Server) authMiddleware(c *gin.Context) {
 
 	userId, err := GetUserIdFromToken(jwt, os.Getenv("SECRET_KEY"))
 	if err != nil {
+		log.Printf("Error get user id from cookie: %s", err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		c.Abort()
 		return
@@ -81,10 +89,10 @@ func (s *Server) authMiddleware(c *gin.Context) {
 
 // GetUserIdFromToken returns user id from token
 func GetUserIdFromToken(tokenString string, secretKey string) (int, error) {
-	if !strings.HasPrefix(tokenString, "Bearer ") {
-		return 0, errors.New("invalid token format")
-	}
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+	// if !strings.HasPrefix(tokenString, "Bearer ") {
+	// 	return 0, errors.New("invalid token format")
+	// }
+	// tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 	token, err := jwt.ParseWithClaims(tokenString, &common.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil

@@ -4,6 +4,7 @@ import (
 	"authentication-service/internal/kafka"
 	"encoding/json"
 	"log"
+	"time"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/IBM/sarama"
@@ -11,7 +12,7 @@ import (
 
 // Producer is an interface for Kafka producer
 type Producer interface {
-	SendMessage(topic string, message common.Notification) error
+	SendMessage(topic string, message common.DataForNotify) error
 }
 
 // ProducerManager is a Kafka producer
@@ -38,6 +39,7 @@ func NewProducerManager(brokers []string) (*ProducerManager, error) {
 			}, nil
 		}
 		log.Printf("Failed to create producer: %s, retrying...", err)
+		time.Sleep(time.Second * 2)
 	}
 	log.Printf("Failed to create producer: %s", err)
 
@@ -45,7 +47,7 @@ func NewProducerManager(brokers []string) (*ProducerManager, error) {
 }
 
 // SendMessage sends a message to a Kafka topic
-func (p *ProducerManager) SendMessage(topic string, message common.Notification) error {
+func (p *ProducerManager) SendMessage(topic string, message common.DataForNotify) error {
 	data, err := json.Marshal(message)
 	if err != nil {
 		log.Printf("Failed to marshal message: %s", err)

@@ -1,0 +1,135 @@
+version: '3.9'
+
+services:
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    networks:
+      - order_processing_network
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    networks:
+      - order_processing_network
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: durka
+      POSTGRES_DB: Order-processing-and-monitoring-system
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - order_processing_network
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - order_processing_network
+
+  api-gateway:
+    build:
+      context: ./APIGateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - CONFIG_PATH=config.yaml
+      - SECRET_KEY=supkyeersecret
+    networks:
+      - order_processing_network
+
+  authentication-service:
+    build:
+      context: ./authentication-service
+      dockerfile: Dockerfile
+    container_name: authentication-service
+    depends_on:
+      - kafka
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+      - REDIS_URL=redis:6379
+      - CONFIG_PATH=config.yaml
+      - SECRET_KEY=supkyeersecret
+    networks:
+      - order_processing_network
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+      - MAIL=hotelbooking02@mail.ru
+      - EMAIL_PASSWORD=hPWFLzDD5mqWMPy1G1ty
+    networks:
+      - order_processing_network
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    container_name: order-service
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+      - CONFIG_PATH=config.yaml
+    networks:
+      - order_processing_network
+
+  status-service:
+    build:
+      context: ./status-service
+      dockerfile: Dockerfile
+    container_name: status-service
+    depends_on:
+      - kafka
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://postgres:durka@postgres:5432/Order-processing-and-monitoring-system?sslmode=disable
+      - KAFKA_BROKERS=kafka:9092
+    networks:
+      - order_processing_network
+
+volumes:
+  postgres_data:
+
+networks:
+  order_processing_network:
+    driver: bridge

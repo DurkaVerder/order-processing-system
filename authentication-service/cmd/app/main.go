@@ -19,7 +19,7 @@ func main() {
 
 	redis := redis.NewRedis()
 
-	producer, err := producer.NewProducerManager([]string{os.Getenv("KAFKA_BROKER")})
+	producer, err := producer.NewProducerManager([]string{os.Getenv("KAFKA_BROKERS")})
 	if err != nil {
 		log.Fatalf("Error while creating producer: %v", err)
 	}

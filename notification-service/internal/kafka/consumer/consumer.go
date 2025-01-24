@@ -1,10 +1,12 @@
 package consumer
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"notification-service/internal/kafka"
 	"notification-service/internal/service"
+	"time"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
 	"github.com/IBM/sarama"
@@ -36,6 +38,7 @@ func NewConsumerManager(brokers []string, service service.Service) *ConsumerMana
 			}
 		}
 		log.Printf("Failed to create consumer: %s, retrying...", err)
+		time.Sleep(time.Second * 2)
 	}
 
 	log.Fatalln("Failed to create consumer")
@@ -52,35 +55,25 @@ func (c *ConsumerManager) Subscribe(topic string) error {
 	return nil
 }
 
-func (c *ConsumerManager) Start() {
+func (c *ConsumerManager) Start(ctx context.Context) {
 	for {
 		select {
 		case msg := <-c.consumePartition.Messages():
 			log.Printf("Received message: %s", msg.Value)
 
-			go func() {
-				notify := common.DataForNotify{}
-				if err := json.Unmarshal(msg.Value, &notify); err != nil {
-					log.Printf("Failed to unmarshal message: %s", err)
-					return
-				}
-
-				notification, err := c.service.CreateNotification(notify)
-				if err != nil {
-					log.Printf("Failed to create notification: %s", err)
-					return
-				}
-
-				if err := c.service.SendNotification(notification); err != nil {
-					log.Printf("Failed to send notification: %s", err)
-					return
-				}
-
-				log.Println("Notification has been sent")
-			}()
+			notify := common.DataForNotify{}
+			if err := json.Unmarshal(msg.Value, &notify); err != nil {
+				log.Printf("Failed to unmarshal message: %s", err)
+				return
+			}
+			c.service.AddDataForNotifyInChan(notify)
 
 		case err := <-c.consumePartition.Errors():
 			log.Printf("Error: %s", err)
+
+		case <-ctx.Done():
+			log.Println("Consumer stopping: context cancelled")
+			return
 		}
 
 	}
