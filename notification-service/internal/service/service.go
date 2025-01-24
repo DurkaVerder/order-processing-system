@@ -52,6 +52,7 @@ func (s *ServiceManager) CreateNotification(notify common.DataForNotify) error {
 	if notification.To == "" {
 		email, err := s.db.GetUserEmailByOrderId(notify.OrderId)
 		if err != nil {
+			log.Printf("Error get email: %s", err)
 			return err
 		}
 		notification.To = email

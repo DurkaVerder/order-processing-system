@@ -19,7 +19,7 @@ func (h *HandlersManager) Login(c *gin.Context) {
 
 	token, err := h.service.Login(dataLogin)
 	if err != nil {
-		fmt.Println("Error login: %s", err)
+		fmt.Printf("Error login: %s", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -49,6 +49,7 @@ func (h *HandlersManager) Logout(c *gin.Context) {
 		Token: c.Query("token"),
 	}
 	if err := h.service.Logout(token); err != nil {
+		log.Printf("Error logout: %s", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

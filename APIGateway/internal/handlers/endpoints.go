@@ -116,7 +116,7 @@ func (h *HandlersManager) HandlerCreateOrder(c *gin.Context) {
 		return
 	}
 	userIdStr := strconv.Itoa(userId.(int))
-	
+
 	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["create_order"] + "?user_id=" + userIdStr
 	res, err := h.requester.SendRequest(url, http.MethodPost, newOrder)
 	if err != nil || res.StatusCode != http.StatusCreated {
@@ -143,14 +143,14 @@ func (h *HandlersManager) HandlerGetOrders(c *gin.Context) {
 	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_orders"] + "?user_id=" + userIdStr
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
-		log.Println("Error: ", err)
+		log.Println("Error send request: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
 	orders := []common.Order{}
-	if err := h.requester.UnmarshalResponse(res, orders); err != nil {
-		log.Println("Error: ", err)
+	if err := h.requester.UnmarshalResponse(res, &orders); err != nil {
+		log.Println("Error unmarshal response: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
@@ -165,14 +165,14 @@ func (h *HandlersManager) HandlerGetOrder(c *gin.Context) {
 	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["get_order"] + "?order_id=" + orderId
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
-		log.Println("Error: ", err)
+		log.Println("Error send request: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
 	order := common.Order{}
 	if err := h.requester.UnmarshalResponse(res, &order); err != nil {
-		log.Println("Error: ", err)
+		log.Println("Error unmarshal response: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
@@ -187,7 +187,7 @@ func (h *HandlersManager) HandlerDeleteOrder(c *gin.Context) {
 	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["delete_order"] + "?order_id=" + orderId
 	res, err := h.requester.SendRequest(url, http.MethodDelete, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
-		log.Println("Error: ", err)
+		log.Println("Error send request: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
@@ -203,7 +203,7 @@ func (h *HandlersManager) HandlerHistoryOrder(c *gin.Context) {
 
 	res, err := h.requester.SendRequest(url, http.MethodGet, nil)
 	if err != nil || res.StatusCode != http.StatusOK {
-		log.Println("Error: ", err)
+		log.Println("Error send request: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
@@ -211,7 +211,7 @@ func (h *HandlersManager) HandlerHistoryOrder(c *gin.Context) {
 	history := common.HistoryOrder{}
 
 	if err := h.requester.UnmarshalResponse(res, &history); err != nil {
-		log.Println("Error: ", err)
+		log.Println("Error unmarshal response: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
