@@ -39,7 +39,7 @@ func (p *Postgres) AddOrder(order common.Order) error {
 
 func (p *Postgres) GetOrder(id string) (common.Order, error) {
 	var order common.Order
-	err := p.db.QueryRow(getOrderQuery, id).Scan(&order.Id, &order.UserId, &order.Status, &order.TotalAmount, &order.CreatedAt, &order.UpdateAt)
+	err := p.db.QueryRow(getOrderQuery, id).Scan(&order.Id, &order.UserId, &order.TotalAmount, &order.Status, &order.CreatedAt, &order.UpdateAt)
 	if err != nil {
 		return order, err
 	}
@@ -57,7 +57,7 @@ func (p *Postgres) GetAllOrders(userId string) ([]common.Order, error) {
 
 	for rows.Next() {
 		var order common.Order
-		err := rows.Scan(&order.Id, &order.UserId, &order.Status, &order.TotalAmount, &order.CreatedAt, &order.UpdateAt)
+		err := rows.Scan(&order.Id, &order.UserId, &order.TotalAmount, &order.Status, &order.CreatedAt, &order.UpdateAt)
 		if err != nil {
 			return nil, err
 		}
