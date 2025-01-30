@@ -29,7 +29,7 @@ func initDB() *sql.DB {
 }
 
 func (p *Postgres) AddOrder(order common.Order) error {
-	_, err := p.db.Exec(addOrderQuery, order.Id, order.UserId, order.Status, order.TotalAmount, order.CreatedAt, order.UpdateAt)
+	_, err := p.db.Exec(addOrderQuery, order.UserId, order.TotalAmount, order.Status, order.CreatedAt, order.UpdateAt)
 	if err != nil {
 		return err
 	}

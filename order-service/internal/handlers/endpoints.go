@@ -16,7 +16,7 @@ func (h *HandlersManager) HandlerAddOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while binding JSON"})
 		return
 	}
-	userId, err := strconv.Atoi(c.Query("userId"))
+	userId, err := strconv.Atoi(c.Query("user_id"))
 	if err != nil {
 		log.Printf("Error while parsing userId: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while parsing userId"})
