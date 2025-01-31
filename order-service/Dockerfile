@@ -4,7 +4,7 @@ WORKDIR /order-service
 
 COPY . .
 
-RUN go mod tidy
+#RUN go mod tidy
 
 RUN go get -u "github.com/lib/pq"
 

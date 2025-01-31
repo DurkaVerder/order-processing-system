@@ -72,7 +72,7 @@ func (rm *RequestManager) UnmarshalResponse(resp *http.Response, something any) 
 	}
 	defer resp.Body.Close()
 
-	err := json.NewDecoder(resp.Body).Decode(&something)
+	err := json.NewDecoder(resp.Body).Decode(something)
 	if err != nil {
 		return err
 	}

@@ -41,7 +41,7 @@ func (s *ServiceManager) CreateNotification(notify common.DataForNotify) error {
 		notification.Subject = "Order created"
 		notification.Body = "Order has been created"
 
-	case "order_updated":
+	case "update_status":
 		notification.Subject = "Order updated"
 		notification.Body = "Order has been updated"
 	case "register":
@@ -52,6 +52,7 @@ func (s *ServiceManager) CreateNotification(notify common.DataForNotify) error {
 	if notification.To == "" {
 		email, err := s.db.GetUserEmailByOrderId(notify.OrderId)
 		if err != nil {
+			log.Printf("Error get email: %s", err)
 			return err
 		}
 		notification.To = email

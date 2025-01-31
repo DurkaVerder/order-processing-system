@@ -1,5 +1,7 @@
-github.com/DurkaVerder/common-for-order-processing-system v1.0.4 h1:Dm8BkMGEH82rlB7s7XmmL08eTtqr6QY8injPBA/LSvw=
-github.com/DurkaVerder/common-for-order-processing-system v1.0.4/go.mod h1:8lD/F/hveurUQXTkfczuOzZlMH/44ZH3GIyacIrA3VQ=
+github.com/DurkaVerder/common-for-order-processing-system v1.0.6 h1:UPU8Kc3z4+DsMLn07FTeDcp0SkMJxpoU5aqfTjVHp3E=
+github.com/DurkaVerder/common-for-order-processing-system v1.0.6/go.mod h1:8lD/F/hveurUQXTkfczuOzZlMH/44ZH3GIyacIrA3VQ=
+github.com/DurkaVerder/common-for-order-processing-system v1.0.7 h1:0+b5fxmRBGooQXEfiGtmoGTCsOn58mZANVIG/MOAF7Y=
+github.com/DurkaVerder/common-for-order-processing-system v1.0.7/go.mod h1:8lD/F/hveurUQXTkfczuOzZlMH/44ZH3GIyacIrA3VQ=
 github.com/IBM/sarama v1.45.0 h1:IzeBevTn809IJ/dhNKhP5mpxEXTmELuezO2tgHD9G5E=
 github.com/IBM/sarama v1.45.0/go.mod h1:EEay63m8EZkeumco9TDXf2JT3uDnZsZqFgV46n4yZdY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
