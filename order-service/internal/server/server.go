@@ -28,6 +28,7 @@ func (s *Server) Start() {
 		order.GET(s.config.Order.Route.Endpoints["get_order"], s.handlers.HandlerGetOrder)
 		order.GET(s.config.Order.Route.Endpoints["get_orders"], s.handlers.HandlerGetAllOrders)
 		order.DELETE(s.config.Order.Route.Endpoints["delete_order"], s.handlers.HandlerDeleteOrder)
+		order.PUT(s.config.Order.Route.Endpoints["change_status"], s.handlers.HandlerChangeStatus)
 	}
 
 	r.Run(s.config.Order.Server.Port)

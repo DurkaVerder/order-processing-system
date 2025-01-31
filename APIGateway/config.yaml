@@ -9,6 +9,7 @@ Gateway:
       get_orders: "/order/get"
       get_order: "/order/:order_id/get"
       delete_order: "/order/:order_id/delete"
+      change_status: "/order/:order_id/status"
       history_order: "/order/:order_id/history"
   server:
     port: ":8080"
@@ -32,6 +33,7 @@ Order:
       get_orders: "/get/all"
       get_order: "/get"
       delete_order: "/delete"
+      change_status: "/status"
   server:
     port: ":8082"
 

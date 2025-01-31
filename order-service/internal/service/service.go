@@ -1,10 +1,12 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"order-service/internal/kafka"
 	"order-service/internal/kafka/producer"
 	"order-service/internal/repository"
+	"strconv"
 	"time"
 
 	common "github.com/DurkaVerder/common-for-order-processing-system/models"
@@ -15,6 +17,7 @@ type Service interface {
 	GetOrder(id string) (common.Order, error)
 	GetAllOrders(userId string) ([]common.Order, error)
 	DeleteOrder(id string) error
+	ChangeStatus(orderId, status string) error
 }
 
 type ServiceManager struct {
@@ -76,4 +79,28 @@ func (s *ServiceManager) GetAllOrders(userId string) ([]common.Order, error) {
 
 func (s *ServiceManager) DeleteOrder(id string) error {
 	return s.db.DeleteOrder(id)
+}
+
+func (s *ServiceManager) ChangeStatus(orderId, status string) error {
+	id, err := strconv.Atoi(orderId)
+	if err != nil {
+		fmt.Printf("Error while parsing orderId: %v", err)
+		return err
+	}
+
+	go func() {
+		msg := common.StatusOrder{
+			OrderId:   id,
+			Status:    status,
+			CreatedAt: time.Now(),
+		}
+
+		if err := s.producer.SendMessage(kafka.StatusTopic, msg); err != nil {
+			log.Printf("Error while sending message: %v", err)
+			return
+		}
+		log.Printf("Message sent: %v", msg)
+	}()
+
+	return nil
 }

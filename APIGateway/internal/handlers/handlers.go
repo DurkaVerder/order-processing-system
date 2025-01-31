@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	StartURLauth = "http://authentication-service"
-	StartURLorder = "http://order-service"
+	StartURLauth    = "http://authentication-service"
+	StartURLorder   = "http://order-service"
 	StartURLhistory = "http://history-service"
 )
 
@@ -23,6 +23,7 @@ type Handlers interface {
 	HandlerGetOrder(c *gin.Context)
 	HandlerDeleteOrder(c *gin.Context)
 	HandlerHistoryOrder(c *gin.Context)
+	HandlerChangeStatusOrder(c *gin.Context)
 }
 
 // HandlersManager is a struct that implements Handlers interface

@@ -68,3 +68,16 @@ func (h *HandlersManager) HandlerDeleteOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Order deleted"})
 }
+
+
+func (h *HandlersManager) HandlerChangeStatus(c *gin.Context) {
+	orderId := c.Query("order_id")
+	status := c.Query("new_status")
+	if err := h.service.ChangeStatus(orderId, status); err != nil {
+		log.Printf("Error while changing status: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while changing status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Status changed"})
+}

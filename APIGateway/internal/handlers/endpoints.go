@@ -218,3 +218,29 @@ func (h *HandlersManager) HandlerHistoryOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, history)
 }
+
+func (h *HandlersManager) HandlerChangeStatusOrder(c *gin.Context) {
+	orderId := c.Param("order_id")
+
+	type inputStatus struct {
+		Status string `json:"status"`
+	}
+
+	newStatus := inputStatus{}
+
+	if err := c.BindJSON(&newStatus); err != nil {
+		log.Println("Error bind json: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+		return
+	}
+
+	url := StartURLorder + h.cfg.Order.Server.Port + h.cfg.Order.Route.Base + h.cfg.Order.Route.Endpoints["change_status"] + "?order_id=" + orderId + "&new_status=" + newStatus.Status
+	res, err := h.requester.SendRequest(url, http.MethodPut, nil)
+	if err != nil || res.StatusCode != http.StatusOK {
+		log.Println("Error send request: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "status changed"})
+}

@@ -11,6 +11,7 @@ type Handlers interface {
 	HandlerGetOrder(c *gin.Context)
 	HandlerGetAllOrders(c *gin.Context)
 	HandlerDeleteOrder(c *gin.Context)
+	HandlerChangeStatus(c *gin.Context)
 }
 
 type HandlersManager struct {
