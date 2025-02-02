@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"log"
 	"status-service/internal/kafka/producer"
 	"status-service/internal/repository"
@@ -25,6 +26,14 @@ func NewServiceManager(db repository.DataBase, producer producer.Producer) *Serv
 }
 
 func (s *ServiceManager) ChangeStatus(orderId int, status string) error {
+	if orderId <= 0 {
+		return errors.New("invalid orderId")
+	}
+
+	if status == "" {
+		return errors.New("invalid status")
+	}
+
 	err := s.db.UpdateStatus(orderId, status)
 	if err != nil {
 		return err

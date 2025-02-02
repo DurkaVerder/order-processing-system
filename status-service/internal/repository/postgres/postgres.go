@@ -12,11 +12,11 @@ type Postgres struct {
 	db *sql.DB
 }
 
-func NewPostgres() *Postgres {
-	return &Postgres{db: initDb()}
+func NewPostgres(db *sql.DB) *Postgres {
+	return &Postgres{db: db}
 }
 
-func initDb() *sql.DB {
+func InitDb() *sql.DB {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("Error opening database: %q", err)
