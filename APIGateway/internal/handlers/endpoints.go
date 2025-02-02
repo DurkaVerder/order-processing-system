@@ -14,14 +14,23 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 	loginData := common.AuthDataLogin{}
 
 	if err := c.BindJSON(&loginData); err != nil {
-		log.Println("Error: ", err)
+		log.Println("Error binding JSON:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
+
+	if h.cfg == nil || h.cfg.Authentication.Server.Port == "" || h.cfg.Authentication.Route.Base == "" {
+		log.Println("Error: configuration is not initialized")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		return
+	}
+
 	url := StartURLauth + h.cfg.Authentication.Server.Port + h.cfg.Authentication.Route.Base + h.cfg.Authentication.Route.Endpoints["login"]
+	log.Println("Sending request to:", url)
+
 	res, err := h.requester.SendRequest(url, http.MethodPost, loginData)
 	if err != nil {
-		log.Println("Error: ", err)
+		log.Println("Error sending request:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
@@ -38,7 +47,7 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 
 	token := common.Token{}
 	if err := h.requester.UnmarshalResponse(res, &token); err != nil {
-		log.Println("Error: ", err)
+		log.Println("Error unmarshaling response:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
@@ -46,7 +55,6 @@ func (h *HandlersManager) HandlerLogin(c *gin.Context) {
 	c.SetCookie("jwt", token.Token, 3600*72, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
-
 }
 
 // HandlerRegister is a handler for register

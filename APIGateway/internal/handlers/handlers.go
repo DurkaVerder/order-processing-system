@@ -29,13 +29,13 @@ type Handlers interface {
 // HandlersManager is a struct that implements Handlers interface
 type HandlersManager struct {
 	requester requester.Requester
-	cfg       config.Config
+	cfg       *config.Config
 }
 
 // NewHandlersManager is a constructor for HandlersManager
 func NewHandlersManager(requester requester.Requester, cfg config.Config) *HandlersManager {
 	return &HandlersManager{
 		requester: requester,
-		cfg:       cfg,
+		cfg:       &cfg,
 	}
 }
