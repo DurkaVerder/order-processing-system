@@ -11,7 +11,8 @@ import (
 )
 
 func main() {
-	postgres := postgres.NewPostgres()
+	db := postgres.InitDb()
+	postgres := postgres.NewPostgres(db)
 
 	producer, err := producer.NewProducerManager([]string{os.Getenv("KAFKA_BROKERS")})
 	if err != nil {
